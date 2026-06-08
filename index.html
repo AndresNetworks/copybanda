@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CopyBanda 🔥 Generador de Copys para Cauchos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--negro:#0f0f0f;--rojo:#e8222a;--rojo-dark:#b81920;--amarillo:#f5c518;--blanco:#f9f6f0;--gris:#1e1e1e;--gris2:#2a2a2a;--gris3:#3a3a3a;--texto-muted:#888}
+body{background:var(--negro);color:var(--blanco);font-family:'Nunito',sans-serif;min-height:100vh;padding:0 0 60px}
+header{background:linear-gradient(135deg,var(--rojo-dark),var(--rojo));padding:24px 20px 20px;text-align:center;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:120%;height:40px;background:var(--negro);border-radius:50% 50% 0 0}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:3px;color:#fff;line-height:1}
+.logo span{color:var(--amarillo)}
+.tagline{font-size:13px;color:rgba(255,255,255,0.8);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.container{max-width:520px;margin:0 auto;padding:32px 16px 0}
+.card{background:var(--gris);border-radius:16px;padding:24px;margin-bottom:16px;border:1px solid var(--gris3)}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--amarillo);margin-bottom:16px}
+label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--texto-muted);margin-bottom:6px}
+input,select{width:100%;background:var(--gris2);border:1.5px solid var(--gris3);border-radius:10px;color:var(--blanco);font-family:'Nunito',sans-serif;font-size:15px;padding:12px 14px;outline:none;transition:border-color 0.2s;margin-bottom:14px}
+input:focus,select:focus{border-color:var(--rojo)}
+select option{background:var(--gris2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row>div{display:flex;flex-direction:column}
+.row input,.row select{margin-bottom:0}
+.extras{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.extra-chip{background:var(--gris2);border:1.5px solid var(--gris3);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;user-select:none;color:var(--blanco)}
+.extra-chip.selected{background:var(--rojo);border-color:var(--rojo);color:#fff}
+.btn-generate{width:100%;background:var(--rojo);border:none;border-radius:12px;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;padding:16px;cursor:pointer;transition:background 0.2s,transform 0.1s}
+.btn-generate:hover{background:var(--rojo-dark)}
+.btn-generate:active{transform:scale(0.98)}
+.btn-generate:disabled{background:var(--gris3);cursor:not-allowed}
+.result-card{background:var(--gris);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--gris3);display:none}
+.result-card.visible{display:block}
+.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.result-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--texto-muted)}
+.badge{background:var(--amarillo);color:#000;font-size:11px;font-weight:900;padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.copy-text{font-size:15px;line-height:1.7;color:var(--blanco);white-space:pre-wrap;word-break:break-word}
+.btn-copy{margin-top:14px;width:100%;background:var(--gris2);border:1.5px solid var(--gris3);border-radius:10px;color:var(--blanco);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;padding:10px;cursor:pointer;transition:all 0.2s}
+.btn-copy:hover{border-color:var(--amarillo);color:var(--amarillo)}
+.btn-copy.copied{background:#1a3a1a;border-color:#2e7d32;color:#66bb6a}
+.loading-dots{display:inline-block;font-size:24px;letter-spacing:4px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.error-msg{background:#2a0f0f;border:1px solid #7a2020;border-radius:10px;padding:12px 16px;color:#f87171;font-size:14px;margin-top:12px;display:none}
+.tip{font-size:12px;color:var(--texto-muted);text-align:center;margin-top:8px;line-height:1.5}
+.variant-num{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--rojo);letter-spacing:1px;margin-bottom:6px}
+footer{text-align:center;padding:24px 16px 0;font-size:12px;color:var(--texto-muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Copy<span>Banda</span> 🔥</div>
+  <div class="tagline">Generador de copys para cauchos · Venezuela</div>
+</header>
+<div class="container">
+  <div class="card">
+    <div class="card-title">📐 Datos del caucho</div>
+    <div class="row">
+      <div><label>Medida</label><input type="text" id="medida" placeholder="Ej: 195/65 R15" maxlength="30"></div>
+      <div><label>Marca</label><input type="text" id="marca" placeholder="Ej: Michelin" maxlength="30"></div>
+    </div>
+    <div class="row">
+      <div><label>Condicion</label><select id="condicion"><option value="nuevo">Nuevo</option><option value="seminuevo">Seminuevo</option><option value="buenas condiciones">Buenas condiciones</option><option value="reencauchado">Reencauchado</option></select></div>
+      <div><label>Precio (opcional)</label><input type="text" id="precio" placeholder="Ej: 45$ / 150Bs" maxlength="30"></div>
+    </div>
+    <label>Extras (opcional)</label>
+    <div class="extras">
+      <div class="extra-chip" onclick="toggleChip(this)">Entrega a domicilio</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Montaje incluido</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Garantia</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Por par / juego</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Negociable</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Solo efectivo</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Acepta divisas</div>
+      <div class="extra-chip" onclick="toggleChip(this)">Zelle / Paypal</div>
+    </div>
+    <label>Estilo del copy</label>
+    <select id="tono"><option value="urgente y directo">🔥 Urgente y directo</option><option value="profesional y confiable">✅ Profesional y confiable</option><option value="amigable venezolano">🇻🇪 Amigable venezolano</option><option value="premium y exclusivo">💎 Premium</option></select>
+    <label>Ciudad / Zona (opcional)</label>
+    <input type="text" id="ciudad" placeholder="Ej: Caracas, Maracaibo..." maxlength="40">
+    <button class="btn-generate" id="btnGenerar" onclick="generarCopy()">⚡ GENERAR COPY</button>
+    <p class="tip">Gratis · Sin registro · Funciona desde el navegador</p>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-header"><span class="result-label">✨ Tus copys listos</span><span class="badge">Para Marketplace</span></div>
+    <div id="variantsContainer" style="display:flex;flex-direction:column;gap:12px;"></div>
+  </div>
+</div>
+<footer>Hecho con ❤️ para vendedores venezolanos · CopyBanda v1.0</footer>
+<script>
+function toggleChip(el){el.classList.toggle('selected')}
+function getExtras(){return Array.from(document.querySelectorAll('.extra-chip.selected')).map(c=>c.textContent.trim())}
+async function generarCopy(){
+  const medida=document.getElementById('medida').value.trim();
+  const marca=document.getElementById('marca').value.trim();
+  const condicion=document.getElementById('condicion').value;
+  const precio=document.getElementById('precio').value.trim();
+  const tono=document.getElementById('tono').value;
+  const ciudad=document.getElementById('ciudad').value.trim();
+  const extras=getExtras();
+  const errorMsg=document.getElementById('errorMsg');
+  const btn=document.getElementById('btnGenerar');
+  const resultCard=document.getElementById('resultCard');
+  errorMsg.style.display='none';
+  if(!medida||!marca){errorMsg.textContent='⚠️ Ingresa la medida y la marca.';errorMsg.style.display='block';return}
+  btn.disabled=true;btn.innerHTML='<span class="loading-dots">...</span>';
+  resultCard.classList.remove('visible');
+  const prompt=`Eres experto en ventas de cauchos en Venezuela para Facebook Marketplace.
+Genera 3 copys diferentes y persuasivos en espanol venezolano.
+Medida: ${medida}, Marca: ${marca}, Condicion: ${condicion}${precio?', Precio: '+precio:''}${extras.length?', Extras: '+extras.join(', '):''}${ciudad?', Ciudad: '+ciudad:''}, Estilo: ${tono}
+Usa emojis y hashtags venezolanos. Maximo 12 lineas por copy.
+Responde SOLO en JSON sin markdown: {"copys":[{"titulo":"Opcion 1","texto":"..."},{"titulo":"Opcion 2","texto":"..."},{"titulo":"Opcion 3","texto":"..."}]}`;
+  try{
+    const res=await fetch('/.netlify/functions/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    if(!res.ok)throw new Error('Error '+res.status);
+    const data=await res.json();
+    const raw=(data.text||'').replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(raw);
+    const container=document.getElementById('variantsContainer');
+    container.innerHTML='';
+    parsed.copys.forEach((copy,i)=>{
+      const div=document.createElement('div');
+      div.style.cssText='background:#2a2a2a;border:1px solid #3a3a3a;border-radius:12px;padding:16px;';
+      div.innerHTML=`<div class="variant-num">${copy.titulo}</div><div class="copy-text" id="ct${i}">${copy.texto}</div><button class="btn-copy" id="cb${i}" onclick="copiar(${i})">📋 Copiar para Marketplace</button>`;
+      container.appendChild(div);
+    });
+    resultCard.classList.add('visible');
+    resultCard.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){
+    errorMsg.textContent='❌ '+(err.message||'Error. Intenta de nuevo.');
+    errorMsg.style.display='block';
+  }finally{btn.disabled=false;btn.innerHTML='⚡ GENERAR COPY'}
+}
+function copiar(i){
+  const t=document.getElementById('ct'+i).textContent;
+  const b=document.getElementById('cb'+i);
+  navigator.clipboard.writeText(t).catch(()=>{const r=document.createRange();r.selectNode(document.getElementById('ct'+i));window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.execCommand('copy')});
+  b.textContent='✅ ¡Copiado!';b.classList.add('copied');
+  setTimeout(()=>{b.textContent='📋 Copiar para Marketplace';b.classList.remove('copied')},2500);
+}
+</script>
+</body>
+</html>
